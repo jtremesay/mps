@@ -1,0 +1,6 @@
+mps_processor.cache
+mps_processor.hw
+mps_processor.ip_user_files
+mps_processor.runs
+mps_processor.srcs
+!mps_processor.srcs/rtl
