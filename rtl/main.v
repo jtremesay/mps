@@ -70,7 +70,7 @@
 `define OPCODE_LOAD 4'b0010
 //
 // - Store
-// st [rd], ra
+// st [ra], rb
 // Store at the address in the register \rd the value stored 
 // in the register \ra
 `define OPCODE_STORE 4'b1010
@@ -86,43 +86,43 @@
 `define OPCODE_DUP 4'b1100
 //
 // - Add
-// add rd, rb, ra
+// add rd, ra, rb
 // Add the values stored in the registers \ra and \rb and store the
 // result in register \rd 
 `define OPCODE_ADD 4'b0001
 //
 // - Substract
-// sub rd, rb, ra
+// sub rd, ra, rb
 // Add the values stored in the registers \ra and \rb and store the
 // result in register \rd 
 `define OPCODE_SUB 4'b1001
 //
 // - Left shift
-// lsh rd, rb, ra
+// lsh rd, ra, rb
 `define OPCODE_LSH 4'b0011
 //
 // - Right shift
-// lsh rd, rb, ra
+// lsh rd, ra, rb
 `define OPCODE_RSH 4'b1011
 //
 // - Bitwise or
-// or rd, rb, ra
+// or rd, ra, rb
 `define OPCODE_OR 4'b0101
 //
 // - Bitwise and
-// and rd, rb, ra
+// and rd, ra, rb
 `define OPCODE_AND 4'b1101
 //
 // - Bitwise xor
-// xor rd, rb, ra
+// xor rd, ra, rb
 `define OPCODE_XOR 4'b0111
 //
 // - Bitwise not
-// xor rd, ra
+// xor ra, rb
 `define OPCODE_NOT 4'b1111
 
 
-module Top(
+module MPSCPU(
     // Instructions memory ports
     output [`IMEM_ADDR_WIDTH - 1:0] imem_addr,
     input [`IMEM_DATA_WIDTH - 1:0] imem_value,
@@ -177,7 +177,6 @@ module Top(
     // Dest register
     wire r_reg_d_enable = r_alu_mode
         || r_opcode == `OPCODE_LOAD
-        || r_opcode == `OPCODE_STORE
         || r_opcode == `OPCODE_SET 
         || r_opcode == `OPCODE_DUP;
     wire [3:0] r_reg_d = r_reg_d_enable ? r_instr[7:4] : 0;
@@ -190,7 +189,8 @@ module Top(
     wire [3:0] r_reg_a = r_reg_a_enable ? r_instr[11:8] : 0;
 
     // Source register B
-    wire r_reg_b_enable  = r_alu_mode && r_opcode != `OPCODE_NOT;
+    wire r_reg_b_enable  = r_alu_mode && r_opcode != `OPCODE_NOT 
+        || r_opcode == `OPCODE_STORE;
     wire [3:0] r_reg_b = r_reg_b_enable ? r_instr[15:12] : 0;
 
     // Immediate value
@@ -209,14 +209,14 @@ module Top(
     wire [`DMEM_DATA_WIDTH - 1:0] r_reg_d_value;
     wire [`DMEM_DATA_WIDTH - 1:0] r_reg_a_value = r_reg_a_enable ? r_regs[r_reg_a] : 0;
     wire [`DMEM_DATA_WIDTH - 1:0] r_reg_b_value = r_reg_b_enable ? r_regs[r_reg_b] : 0;
-    integer reg_i;
+    integer i;
     always @(negedge clock) begin
-        if (nreset) begin
-            for (reg_i = 0; reg_i < `REGS_COUNT; reg_i = reg_i + 1) begin
-                r_regs[reg_i] <= 0;
+        if (!nreset) begin
+            for (i = 0; i < `REGS_COUNT; i = i + 1) begin
+                r_regs[i] <= 0;
             end
         end else begin
-            if (r_reg_d_enable) begin
+            if (r_reg_d_enable && r_reg_d != 0) begin
                 r_regs[r_reg_d] <= r_reg_d_value;
             end
         end
@@ -250,10 +250,10 @@ module Top(
     // 
     // Write or read any value from the memory
     assign dmem_wenable = r_mem_write;
-    assign dmem_addr = r_mem_write ? r_reg_d_value : r_mem_read ? r_reg_a_value : 0;
-    assign dmem_wvalue = r_mem_write ? r_reg_a_value : 0;
+    assign dmem_addr = (r_mem_write || r_mem_read) ? r_reg_a_value : 0;
+    assign dmem_wvalue = r_mem_write ? r_reg_b_value : 0;
     reg [`DMEM_DATA_WIDTH - 1:0] r_mem_value;
-    always @(negedge clock) begin
+    always @(*) begin
         if (!nreset) begin
             r_mem_value <= 0;
         end else begin
