@@ -34,10 +34,13 @@ module MPSCPU(
         .nreset(nreset)
     );
 
-    // The instruction memory is directly connected to the pc and insr
-    // registers
-    assign imem_addr = r_pc;
-    wire [`IMEM_DATA_WIDTH - 1:0] r_instr = imem_value; // Fetched instructionn
+    wire [`IMEM_DATA_WIDTH - 1:0] r_instr;
+    InstructionFetcher c_if(
+        .pc(r_pc),
+        .instr(r_instr),
+        .mem_addr(imem_addr),
+        .mem_value(imem_value)
+    );
 
 
 
