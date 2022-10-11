@@ -91,11 +91,11 @@ module MPSCPU(
     // https://en.wikipedia.org/wiki/Classic_RISC_pipeline#Execute
     //
     // Do the actual work
-    wire [`DMEM_DATA_WIDTH - 1:0] r_alu_res;
+    wire [`DMEM_DATA_WIDTH - 1:0] r_alu_z;
     ALU c_alu(
         .a(r_use_imm ? r_imm : r_reg_a_value),
         .b(r_reg_b_value),
-        .z(r_alu_res),
+        .z(r_alu_z),
         .func(r_alu_func),
         .enable(r_alu_enable)
     );
@@ -105,22 +105,21 @@ module MPSCPU(
     // https://en.wikipedia.org/wiki/Classic_RISC_pipeline#Memory_access
     // 
     // Write or read any value from the memory
-    assign dmem_wenable = r_mem_write;
-    assign dmem_addr = (r_mem_write || r_mem_read) ? r_reg_a_value : 0;
-    assign dmem_wvalue = r_mem_write ? r_reg_b_value : 0;
-    reg [`DMEM_DATA_WIDTH - 1:0] r_mem_value;
-    always @(*) begin
-        if (!nreset) begin
-            r_mem_value <= 0;
-        end else begin
-            r_mem_value <= dmem_rvalue;
-        end
-    end
-
+    wire [`DMEM_DATA_WIDTH - 1:0] r_mem_value;
+    MemoryAccesser c_ma(
+        .addr(r_reg_a_value),
+        .write_enable(r_mem_write),
+        .wvalue(r_reg_b_value),
+        .rvalue(r_mem_value),
+        .mem_addr(dmem_addr),
+        .mem_wenable(dmem_wenable),
+        .mem_rvalue(dmem_rvalue),
+        .mem_wvalue(dmem_wenable)
+    );
 
     // Writeback
     // https://en.wikipedia.org/wiki/Classic_RISC_pipeline#Writeback
     //
     // Write back to the register file the computed or fetched value
-    assign r_reg_d_value = r_mem_read ? r_mem_value : r_alu_res;
+    assign r_reg_d_value = r_mem_read ? r_mem_value : r_alu_z;
 endmodule
