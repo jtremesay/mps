@@ -87,34 +87,42 @@
 // add rd, ra, rb
 // Add the values stored in the registers \ra and \rb and store the
 // result in register \rd 
-`define OPCODE_ADD 4'b0001
+`define ALU_FUNC_ADD 3'b000
+`define OPCODE_ADD ((`ALU_FUNC_ADD << 1) | 1'b1)
 //
 // - Substract
 // sub rd, ra, rb
 // Add the values stored in the registers \ra and \rb and store the
 // result in register \rd 
-`define OPCODE_SUB 4'b1001
+`define ALU_FUNC_SUB 3'b100
+`define OPCODE_SUB ((`ALU_FUNC_SUB << 1) | 1'b1)
 //
 // - Left shift
 // lsh rd, ra, rb
-`define OPCODE_LSH 4'b0011
+`define ALU_FUNC_LSH 3'b001
+`define OPCODE_LSH ((`ALU_FUNC_LSH << 1) | 1'b1)
 //
 // - Right shift
 // lsh rd, ra, rb
-`define OPCODE_RSH 4'b1011
+`define ALU_FUNC_RSH 3'b101
+`define OPCODE_RSH ((`ALU_FUNC_RSH << 1) | 1'b1)
 //
 // - Bitwise or
 // or rd, ra, rb
-`define OPCODE_OR 4'b0101
+`define ALU_FUNC_OR 3'b010
+`define OPCODE_OR ((`ALU_FUNC_OR << 1) | 1'b1)
 //
 // - Bitwise and
 // and rd, ra, rb
-`define OPCODE_AND 4'b1101
+`define ALU_FUNC_AND 3'b110
+`define OPCODE_AND ((`ALU_FUNC_AND << 1) | 1'b1)
 //
 // - Bitwise xor
 // xor rd, ra, rb
-`define OPCODE_XOR 4'b0111
+`define ALU_FUNC_XOR 3'b011
+`define OPCODE_XOR ((`ALU_FUNC_XOR << 1) | 1'b1)
 //
 // - Bitwise not
 // xor ra, rb
-`define OPCODE_NOT 4'b1111
+`define ALU_FUNC_NOT 3'b111
+`define OPCODE_NOT ((`ALU_FUNC_NOT << 1) | 1'b1)

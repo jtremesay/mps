@@ -102,24 +102,15 @@ module MPSCPU(
     // https://en.wikipedia.org/wiki/Classic_RISC_pipeline#Execute
     //
     // Do the actual work
-    reg [`DMEM_DATA_WIDTH - 1:0] r_alu_res;
-    always @(*) begin
-        case (r_opcode)
-            `OPCODE_SET: r_alu_res <= r_imm;
-            `OPCODE_DUP: r_alu_res <= r_reg_a_value;
-            `OPCODE_ADD: r_alu_res <= r_reg_a_value + r_reg_b_value;
-            `OPCODE_SUB: r_alu_res <= r_reg_a_value - r_reg_b_value;
-            `OPCODE_LSH: r_alu_res <= r_reg_a_value << r_reg_b_value;
-            `OPCODE_RSH: r_alu_res <= r_reg_a_value >> r_reg_b_value;
-            `OPCODE_OR: r_alu_res <= r_reg_a_value | r_reg_b_value;
-            `OPCODE_AND: r_alu_res <= r_reg_a_value & r_reg_b_value;
-            `OPCODE_XOR: r_alu_res <= r_reg_a_value ^ r_reg_b_value;
-            `OPCODE_NOT: r_alu_res <= ~r_reg_a_value;
-            default: r_alu_res <= 0;
-        endcase
-    end
-
-
+    wire [`DMEM_DATA_WIDTH - 1:0] r_alu_res;
+    ALU c_alu(
+        .a(r_reg_a_value),
+        .b(r_reg_b_value),
+        .z(r_alu_res),
+        .func(r_func),
+        .enable(r_alu_mode)
+    );
+    
     // Memory access
     // https://en.wikipedia.org/wiki/Classic_RISC_pipeline#Memory_access
     // 
