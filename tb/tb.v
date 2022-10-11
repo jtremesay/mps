@@ -16,6 +16,7 @@ module Testbench();
     // Clock
     initial begin
         clock <= 0;
+        nreset <= 1;
     end
 
     always begin
