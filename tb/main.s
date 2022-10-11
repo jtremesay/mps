@@ -12,3 +12,5 @@ ld r7 r1
 ld r6 r2
 xor r5 r6 r7
 st r2 r5
+
+hcf

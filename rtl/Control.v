@@ -8,7 +8,8 @@ module Control(
     output alu_enable,
     output [2:0] alu_func,
     output mem_read,
-    output mem_write
+    output mem_write,
+    output fire_starting
 );
     assign alu_enable = opcode[0];
     assign alu_func = opcode[3:1];
@@ -19,4 +20,5 @@ module Control(
         || opcode == `OPCODE_LOAD
         || opcode == `OPCODE_SET 
         || opcode == `OPCODE_DUP;
+    assign fire_starting = opcode == `OPCODE_HCF;
 endmodule

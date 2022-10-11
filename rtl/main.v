@@ -18,6 +18,16 @@ module MPSCPU(
     input clock,
     input nreset
 );
+    reg r_on_fire;
+    wire r_fire_starting;
+    always @(posedge clock) begin
+        if (!nreset) begin
+            r_on_fire <= 0;
+        end else if (r_fire_starting) begin
+            r_on_fire <= 1;
+        end
+    end
+
     // Instruction Fetch
     // https://en.wikipedia.org/wiki/Classic_RISC_pipeline#Instruction_fetch
     //
@@ -27,7 +37,8 @@ module MPSCPU(
     ProgramCounter c_pc(
         .pc(r_pc),
         .clock(clock),
-        .nreset(nreset)
+        .nreset(nreset),
+        .on_fire(r_on_fire)
     );
 
     wire [`IMEM_DATA_WIDTH - 1:0] r_instr;
@@ -70,7 +81,8 @@ module MPSCPU(
         .alu_enable(r_alu_enable),
         .alu_func(r_alu_func),
         .mem_read(r_mem_read),
-        .mem_write(r_mem_write)
+        .mem_write(r_mem_write),
+        .fire_starting(r_fire_starting)
     );
 
     wire [`DMEM_DATA_WIDTH - 1:0] r_reg_d_value;
