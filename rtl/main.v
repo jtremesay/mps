@@ -20,8 +20,6 @@ module MPSCPU(
 );
     reg r_on_fire; // Is the processor on fire?
 
-
-
     // Instruction Fetch
     // https://en.wikipedia.org/wiki/Classic_RISC_pipeline#Instruction_fetch
     //
@@ -85,25 +83,20 @@ module MPSCPU(
     // Memory read?
     wire r_mem_read = r_opcode == `OPCODE_LOAD;
 
-    // Our register file
-    // https://en.wikipedia.org/wiki/Register_file
-    reg [`DMEM_DATA_WIDTH - 1:0] r_regs [`REGS_COUNT - 1:0];
     wire [`DMEM_DATA_WIDTH - 1:0] r_reg_d_value;
-    wire [`DMEM_DATA_WIDTH - 1:0] r_reg_a_value = r_reg_a_enable ? r_regs[r_reg_a] : 0;
-    wire [`DMEM_DATA_WIDTH - 1:0] r_reg_b_value = r_reg_b_enable ? r_regs[r_reg_b] : 0;
-    integer i;
-    always @(negedge clock) begin
-        if (!nreset) begin
-            for (i = 0; i < `REGS_COUNT; i = i + 1) begin
-                r_regs[i] <= 0;
-            end
-        end else begin
-            if (r_reg_d_enable && r_reg_d != 0) begin
-                r_regs[r_reg_d] <= r_reg_d_value;
-            end
-        end
-    end
-
+    wire [`DMEM_DATA_WIDTH - 1:0] r_reg_a_value;
+    wire [`DMEM_DATA_WIDTH - 1:0] r_reg_b_value;
+    RegisterFile c_rf(
+        .reg_d_enable(r_reg_d_enable),
+        .reg_d(r_reg_d),
+        .reg_d_value(r_reg_d_value),
+        .reg_a(r_reg_a),
+        .reg_a_value(r_reg_a_value),
+        .reg_b(r_reg_b),
+        .reg_b_value(r_reg_b_value),
+        .clock(clock),
+        .nreset(nreset)
+    );
 
     // Execute
     // https://en.wikipedia.org/wiki/Classic_RISC_pipeline#Execute
