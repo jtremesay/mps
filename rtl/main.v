@@ -46,42 +46,35 @@ module MPSCPU(
     // https://en.wikipedia.org/wiki/Classic_RISC_pipeline#Instruction_decode
     //
     // Extract the useful informations from the instruction
+    wire [3:0] r_opcode;
+    wire [3:0] r_reg_d;
+    wire [3:0] r_reg_a;
+    wire [3:0] r_reg_b;
+    wire [`DMEM_DATA_WIDTH - 1:0] r_imm;
+    InstructionDecoder c_id(
+        .instr(r_instr),
+        .opcode(r_opcode),
+        .reg_d(r_reg_d),
+        .reg_a(r_reg_a),
+        .reg_b(r_reg_b),
+        .imm(r_imm)
+    );
     
-    // Extract the opcode
-    wire [3:0] r_opcode = r_instr[3:0];
-
-    // Extract the ALU mode and ALU func
-    wire r_alu_mode = r_opcode[0];
-    wire [2:0] r_func = r_opcode[3:1];
-
-    // Dest register
-    wire r_reg_d_enable = r_alu_mode
-        || r_opcode == `OPCODE_LOAD
-        || r_opcode == `OPCODE_SET 
-        || r_opcode == `OPCODE_DUP;
-    wire [3:0] r_reg_d = r_reg_d_enable ? r_instr[7:4] : 0;
-
-    // Source register A
-    wire r_reg_a_enable = r_alu_mode
-        || r_opcode == `OPCODE_LOAD
-        || r_opcode == `OPCODE_STORE
-        || r_opcode == `OPCODE_DUP;
-    wire [3:0] r_reg_a = r_reg_a_enable ? r_instr[11:8] : 0;
-
-    // Source register B
-    wire r_reg_b_enable  = r_alu_mode && r_opcode != `OPCODE_NOT 
-        || r_opcode == `OPCODE_STORE;
-    wire [3:0] r_reg_b = r_reg_b_enable ? r_instr[15:12] : 0;
-
-    // Immediate value
-    wire r_imm_enable = r_opcode == `OPCODE_SET;
-    wire [7:0] r_imm = r_imm_enable ? r_instr[15:8] : 0;
-
-    // Memory write?
-    wire r_mem_write = r_opcode == `OPCODE_STORE;
-
-    // Memory read?
-    wire r_mem_read = r_opcode == `OPCODE_LOAD;
+    wire r_alu_enable;
+    wire [2:0] r_alu_func;
+    wire r_use_imm;
+    wire r_reg_d_enable;
+    wire r_mem_read; 
+    wire r_mem_write; 
+    Control c_c(
+        .opcode(r_opcode),
+        .reg_d_enable(r_reg_d_enable),
+        .use_imm(r_use_imm),
+        .alu_enable(r_alu_enable),
+        .alu_func(r_alu_func),
+        .mem_read(r_mem_read),
+        .mem_write(r_mem_write)
+    );
 
     wire [`DMEM_DATA_WIDTH - 1:0] r_reg_d_value;
     wire [`DMEM_DATA_WIDTH - 1:0] r_reg_a_value;
@@ -104,13 +97,14 @@ module MPSCPU(
     // Do the actual work
     wire [`DMEM_DATA_WIDTH - 1:0] r_alu_res;
     ALU c_alu(
-        .a(r_reg_a_value),
+        .a(r_use_imm ? r_imm : r_reg_a_value),
         .b(r_reg_b_value),
         .z(r_alu_res),
-        .func(r_func),
-        .enable(r_alu_mode)
+        .func(r_alu_func),
+        .enable(r_alu_enable)
     );
     
+
     // Memory access
     // https://en.wikipedia.org/wiki/Classic_RISC_pipeline#Memory_access
     // 

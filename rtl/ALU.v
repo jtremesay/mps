@@ -21,6 +21,8 @@ module ALU(
                 `ALU_FUNC_NOT: z <= ~a;
                 default: z <= 0;
             endcase
+        end else begin
+            z <= a;
         end
     end
 endmodule
