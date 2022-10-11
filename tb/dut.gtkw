@@ -1,0 +1,81 @@
+[*]
+[*] GTKWave Analyzer v3.3.111 (w)1999-2020 BSI
+[*] Tue Oct 11 19:54:12 2022
+[*]
+[dumpfile] "/home/jtremesay/projects/mps_processor/tb/dut.vcd"
+[dumpfile_mtime] "Tue Oct 11 19:48:05 2022"
+[dumpfile_size] 13287
+[savefile] "/home/jtremesay/projects/mps_processor/tb/dut.gtkw"
+[timestart] 0
+[size] 1916 1041
+[pos] -1 -1
+*-14.466854 42500 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] Testbench.
+[treeopen] Testbench.dut.
+[sst_width] 207
+[signals_width] 182
+[sst_expanded] 1
+[sst_vpaned_height] 304
+@28
+Testbench.dut.clock
+Testbench.dut.nreset
+Testbench.dut.r_on_fire
+@200
+-
+-Program Counter
+@22
+Testbench.dut.c_pc.pc[7:0]
+@200
+-
+-Instruction Fetcher
+@22
+Testbench.dut.c_if.instr[15:0]
+@200
+-
+-Instruction Decoder
+@22
+Testbench.dut.c_id.opcode[3:0]
+Testbench.dut.c_id.imm[7:0]
+Testbench.dut.c_id.reg_d[3:0]
+Testbench.dut.c_id.reg_a[3:0]
+Testbench.dut.c_id.reg_b[3:0]
+@200
+-
+-Control
+@22
+Testbench.dut.c_c.opcode[3:0]
+@28
+Testbench.dut.c_c.fire_starting
+@200
+-
+-ALU
+@28
+Testbench.dut.c_alu.enable
+Testbench.dut.c_alu.func[2:0]
+Testbench.dut.c_c.use_imm
+@22
+Testbench.dut.c_alu.a[7:0]
+Testbench.dut.c_alu.b[7:0]
+Testbench.dut.c_alu.z[7:0]
+@200
+-
+-Memory Accessor
+@22
+Testbench.dut.c_ma.addr[7:0]
+@28
+Testbench.dut.c_c.mem_read
+@22
+Testbench.dut.c_ma.rvalue[7:0]
+@28
+Testbench.dut.c_c.mem_write
+@22
+Testbench.dut.c_ma.wvalue[7:0]
+@200
+-
+-WriteBacker
+@28
+Testbench.dut.c_c.reg_d_enable
+@22
+Testbench.dut.c_wb.d_value[7:0]
+[pattern_trace] 1
+[pattern_trace] 0
