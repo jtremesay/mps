@@ -121,5 +121,10 @@ module MPSCPU(
     // https://en.wikipedia.org/wiki/Classic_RISC_pipeline#Writeback
     //
     // Write back to the register file the computed or fetched value
-    assign r_reg_d_value = r_mem_read ? r_mem_value : r_alu_z;
+    WriteBacker c_wb(
+        .alu_z(r_alu_z),
+        .mem_value(r_mem_value),
+        .mem_read(r_mem_read),
+        .d_value(r_reg_d_value)
+    );
 endmodule
