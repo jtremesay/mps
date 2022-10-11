@@ -18,8 +18,6 @@ module MPSCPU(
     input clock,
     input nreset
 );
-    reg r_on_fire; // Is the processor on fire?
-
     // Instruction Fetch
     // https://en.wikipedia.org/wiki/Classic_RISC_pipeline#Instruction_fetch
     //
@@ -41,7 +39,6 @@ module MPSCPU(
     );
 
 
-
     // Instruction Decode
     // https://en.wikipedia.org/wiki/Classic_RISC_pipeline#Instruction_decode
     //
@@ -59,7 +56,7 @@ module MPSCPU(
         .reg_b(r_reg_b),
         .imm(r_imm)
     );
-    
+
     wire r_alu_enable;
     wire [2:0] r_alu_func;
     wire r_use_imm;
@@ -86,10 +83,9 @@ module MPSCPU(
         .reg_a(r_reg_a),
         .reg_a_value(r_reg_a_value),
         .reg_b(r_reg_b),
-        .reg_b_value(r_reg_b_value),
-        .clock(clock),
-        .nreset(nreset)
+        .reg_b_value(r_reg_b_value)
     );
+
 
     // Execute
     // https://en.wikipedia.org/wiki/Classic_RISC_pipeline#Execute

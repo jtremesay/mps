@@ -10,28 +10,18 @@ module RegisterFile(
     output [`DMEM_DATA_WIDTH - 1:0] reg_a_value,
 
     input [3:0] reg_b,
-    output [`DMEM_DATA_WIDTH - 1:0] reg_b_value,
-
-    input clock,
-    input nreset
+    output [`DMEM_DATA_WIDTH - 1:0] reg_b_value
 ); 
     // Declare the register
-    reg [`DMEM_DATA_WIDTH - 1:0] r_regs [`REGS_COUNT - 1:0];
+    reg [`DMEM_DATA_WIDTH - 1:0] r_regs [`REGS_COUNT - 1:1];
     
     // Bind regs A and B
-    assign reg_a_value = r_regs[reg_a];
-    assign reg_b_value = r_regs[reg_b];
+    assign reg_a_value = reg_a == 0 ? 0 : r_regs[reg_a];
+    assign reg_b_value = reg_b == 0 ? 0 : r_regs[reg_b];
     
-    integer i;
-    always @(negedge clock) begin
-        if (!nreset) begin
-            for (i = 0; i < `REGS_COUNT; i = i + 1) begin
-                r_regs[i] <= 0;
-            end
-        end else begin
-            if (reg_d_enable && reg_d != 0) begin
-                r_regs[reg_d] <= reg_d_value;
-            end
+    always @(*) begin
+        if (reg_d_enable && reg_d != 0) begin
+            r_regs[reg_d] <= reg_d_value;
         end
     end
 
