@@ -5,7 +5,7 @@ module MemoryAccesser(
     input [`DMEM_ADDR_WIDTH - 1:0] addr,
     input write_enable,
     input [`DMEM_DATA_WIDTH - 1:0] wvalue,
-    output rvalue,
+    output [`DMEM_DATA_WIDTH - 1:0] rvalue,
 
     output [`DMEM_ADDR_WIDTH - 1:0] mem_addr,
     output mem_wenable,
