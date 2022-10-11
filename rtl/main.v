@@ -11,8 +11,8 @@ module MPSCPU(
     // Data memory ports
     output [`DMEM_ADDR_WIDTH - 1:0] dmem_addr,
     output dmem_wenable,
-    input [`DMEM_ADDR_WIDTH - 1:0] dmem_rvalue,
-    output [`DMEM_ADDR_WIDTH - 1:0] dmem_wvalue,
+    input [`DMEM_DATA_WIDTH - 1:0] dmem_rvalue,
+    output [`DMEM_DATA_WIDTH - 1:0] dmem_wvalue,
 
     // Sync signals
     input clock,
@@ -114,7 +114,7 @@ module MPSCPU(
         .mem_addr(dmem_addr),
         .mem_wenable(dmem_wenable),
         .mem_rvalue(dmem_rvalue),
-        .mem_wvalue(dmem_wenable)
+        .mem_wvalue(dmem_wvalue)
     );
 
     // Writeback
